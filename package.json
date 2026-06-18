@@ -1,0 +1,25 @@
+{
+  "name": "mioku-service-netease",
+  "version": "1.0.0",
+  "description": "NetEase Cloud Music 服务，支持歌曲搜索、详情、专辑详情、音频下载与封面下载",
+  "main": "index.ts",
+  "type": "module",
+  "keywords": [
+    "mioku"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mioku-lab/mioku-service-netease.git"
+  },
+  "dependencies": {
+    "yms-netease-music-api": "^4.27.20"
+  },
+  "peerDependencies": {
+    "mioku": "^0.8.0",
+    "mioki": "^0.16.0"
+  },
+  "devDependencies": {
+    "mioku": "workspace:*",
+    "mioki": "^0.16.0"
+  }
+}
