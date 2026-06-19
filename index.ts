@@ -1,5 +1,9 @@
 import { logger } from "mioki";
 import type { MiokuService } from "mioku";
+import {
+  registerServiceConfig,
+  getServiceConfig,
+} from "mioku";
 import { NeteaseClientImpl } from "./client";
 import type { NeteaseServiceApi } from "./types";
 export type {
@@ -19,6 +23,10 @@ const api: NeteaseServiceApi = {
   createClient(options) {
     return new NeteaseClientImpl(options);
   },
+
+  getDefaultOptions() {
+    return getServiceConfig("netease", "base");
+  },
 };
 
 const neteaseService: MiokuService = {
@@ -28,6 +36,10 @@ const neteaseService: MiokuService = {
     "NetEase Cloud Music service for song search, detail, album detail and audio/cover downloads",
   api,
   async init() {
+    registerServiceConfig("netease", "base", {
+      cookie: "",
+      quality: "exhigh",
+    });
     logger.info("netease 服务已就绪");
   },
 };
