@@ -1,6 +1,6 @@
 {
   "name": "mioku-service-netease",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "NetEase Cloud Music 服务，支持歌曲搜索、详情、专辑详情、音频下载与封面下载",
   "main": "index.ts",
   "type": "module",
