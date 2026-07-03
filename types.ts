@@ -81,5 +81,5 @@ export interface NeteaseClient {
 
 export interface NeteaseServiceApi {
   createClient(options?: NeteaseClientOptions): NeteaseClient;
-  getDefaultOptions(): NeteaseClientOptions;
+  getDefaultOptions(): Promise<NeteaseClientOptions>;
 }
