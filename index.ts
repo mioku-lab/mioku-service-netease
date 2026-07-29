@@ -1,11 +1,15 @@
 import { logger } from "mioki";
 import type { MiokuService } from "mioku";
 import {
+  defineService,
   registerServiceConfig,
   getServiceConfig,
 } from "mioku";
 import { NeteaseClientImpl } from "./client";
 import type { NeteaseServiceApi, NeteaseClientOptions } from "./types";
+
+export const NeteaseService = defineService<NeteaseServiceApi>("netease");
+
 export type {
   NeteaseClient,
   NeteaseClientOptions,
