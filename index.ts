@@ -35,9 +35,6 @@ const api: NeteaseServiceApi = {
 
 const neteaseService: MiokuService = {
   name: "netease",
-  version: "1.0.0",
-  description:
-    "NetEase Cloud Music service for song search, detail, album detail and audio/cover downloads",
   api,
   async init() {
     await registerServiceConfig("netease", "base", {
