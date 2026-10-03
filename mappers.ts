@@ -3,7 +3,7 @@ import type {
   NeteaseCloudSearchBody,
   NeteaseSong,
   NeteaseSongUrlItem,
-} from "yms-netease-music-api";
+} from "@neteasecloudmusicapienhanced/api";
 import type {
   ProviderAlbumDetail,
   ProviderAlbumTrack,
@@ -115,12 +115,22 @@ export function mapSongUrlItem(
   };
 }
 
+const LOSSLESS_LEVELS = new Set([
+  "lossless",
+  "hires",
+  "jyeffect",
+  "jymaster",
+  "sky",
+  "vivid",
+]);
+
 function inferAudioExt(item: NeteaseSongUrlItem): string {
   const declared = String(item.type || "").toLowerCase();
   if (declared === "flac") return "flac";
   if (declared === "mp3" || declared === "mpeg") return "mp3";
   if (declared === "m4a") return "m4a";
   if (declared === "ogg") return "ogg";
+  if (LOSSLESS_LEVELS.has(String(item.level || "").toLowerCase())) return "flac";
   if (item.br >= 800_000) return "flac";
   return "mp3";
 }

@@ -1,6 +1,6 @@
 # mioku-service-netease
 
-NetEase Cloud Music service for `mioku-plugin-music`. Wraps the [yms-netease-music-api](https://www.npmjs.com/package/yms-netease-music-api) library (a maintained Node port of the NeteaseCloudMusicApi protocol) and exposes a `createClient()` factory that the music plugin's provider registry can consume.
+NetEase Cloud Music service for `mioku-plugin-music`. Wraps the [@neteasecloudmusicapienhanced/api](https://github.com/NeteaseCloudMusicApiEnhanced/api-enhanced) library (an open-source, maintained fork of NeteaseCloudMusicApi) and exposes a `createClient()` factory that the music plugin's provider registry can consume.
 
 > **未经详细测试，如有运行问题请提出issue**
 
@@ -44,3 +44,7 @@ client.downloadCover({ artworkUrl, outputDir?, fileName?, size? })
 | `hires`       | 999 kbps        | 是         |
 
 非 VIP 用户请保持 `exhigh`。尝试以 `lossless` 下载 VIP 歌曲时，NetEase 会返回空 URL，服务会抛出 `歌曲需要 VIP 或版权受限` 错误。
+
+## 会话
+
+音质解析走 `song_url_v1`（按 level 档位取流），首次下载会向网易注册一次设备密钥并写入系统临时目录的 `xeapi_public_key`；注册失败时自动回退 `weapi` 加密，不影响下载。

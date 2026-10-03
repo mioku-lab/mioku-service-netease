@@ -1,14 +1,18 @@
-import ncm from "yms-netease-music-api";
+import ncm from "@neteasecloudmusicapienhanced/api";
 import type {
   NeteaseAlbumDetailBody,
   NeteaseCloudSearchBody,
   NeteaseSongDetailBody,
   NeteaseSongUrlBody,
-} from "yms-netease-music-api";
+} from "@neteasecloudmusicapienhanced/api";
 import type { NeteaseQuality } from "../types";
-import { resolveBitrate } from "../constants";
 import { extractApiCode } from "../utils";
 import { CookieState } from "./cookie";
+import { ensureNeteaseSession } from "./session";
+
+function isMissingXeapiKey(error: unknown): boolean {
+  return error instanceof Error && error.message.includes("xeapi public key");
+}
 
 export interface NeteaseQueriesOptions {
   cookie: CookieState;
@@ -17,11 +21,11 @@ export interface NeteaseQueriesOptions {
 
 export class NeteaseQueries {
   private readonly cookie: CookieState;
-  private readonly bitrate: number;
+  private readonly level: NeteaseQuality;
 
   constructor(options: NeteaseQueriesOptions) {
     this.cookie = options.cookie;
-    this.bitrate = resolveBitrate(options.quality);
+    this.level = options.quality;
   }
 
   async search(
@@ -56,9 +60,23 @@ export class NeteaseQueries {
   }
 
   async resolveSongUrl(songId: string): Promise<NeteaseSongUrlBody> {
-    const res = await ncm.song_url({
+    await ensureNeteaseSession();
+    try {
+      return await this.requestSongUrl(songId);
+    } catch (error) {
+      if (!isMissingXeapiKey(error)) throw error;
+      return await this.requestSongUrl(songId, "weapi");
+    }
+  }
+
+  private async requestSongUrl(
+    songId: string,
+    crypto?: string,
+  ): Promise<NeteaseSongUrlBody> {
+    const res = await ncm.song_url_v1({
       id: songId,
-      br: this.bitrate,
+      level: this.level,
+      crypto,
       ...this.cookie.toRequestConfig(),
     });
     return this.unwrapBody<NeteaseSongUrlBody>(res.body);

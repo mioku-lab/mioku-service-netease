@@ -1,15 +1,17 @@
-// Local shim for `yms-netease-music-api`. The package ships `main: main.js`
-// (CommonJS namespace) and `types: interface.d.ts` (per-function declarations),
-// but TypeScript can't reconcile "default export is a runtime namespace object"
-// with "individual `export function cloudsearch(...)` declarations". Rather than
-// rely on subpath type imports that may not resolve through bun, we declare
-// only the surface we actually use.
+// Local shim for `@neteasecloudmusicapienhanced/api`. The package ships `main: main.js`
+// (CommonJS namespace) and `types: interface.d.ts` (per-function declarations), but
+// TypeScript can't reconcile "default export is a runtime namespace object" with
+// "individual `export function cloudsearch(...)` declarations". Rather than rely on
+// subpath type imports that may not resolve through bun, we declare only the surface
+// we actually use.
 
-declare module "yms-netease-music-api" {
+declare module "@neteasecloudmusicapienhanced/api" {
   export interface RequestBaseConfig {
     cookie?: string;
     realIP?: string;
     proxy?: string;
+    /** 加密方式：weapi / xeapi / eapi …，缺省由各 module 决定 */
+    crypto?: string;
   }
 
   export interface APIBaseResponse {
@@ -94,8 +96,14 @@ declare module "yms-netease-music-api" {
     params: { keywords: string; type?: SearchType; limit?: number; offset?: number } & RequestBaseConfig,
   ): Promise<Response<NeteaseCloudSearchBody>>;
 
-  export function song_url(
-    params: { id: string | number; br?: string | number } & RequestBaseConfig,
+  // v1 音质档位：standard / exhigh / lossless / hires / jyeffect / jymaster / sky / vivid
+  export function song_url_v1(
+    params: {
+      id: string | number;
+      level?: string;
+      unblock?: boolean | string;
+      immerseType?: string;
+    } & RequestBaseConfig,
   ): Promise<Response<NeteaseSongUrlBody>>;
 
   export function song_detail(
@@ -121,7 +129,7 @@ declare module "yms-netease-music-api" {
 
   const ncm: {
     cloudsearch: typeof cloudsearch;
-    song_url: typeof song_url;
+    song_url_v1: typeof song_url_v1;
     song_detail: typeof song_detail;
     album: typeof album;
     lyric: typeof lyric;
@@ -130,4 +138,23 @@ declare module "yms-netease-music-api" {
   };
 
   export default ncm;
+}
+
+declare module "@neteasecloudmusicapienhanced/api/util/index.js" {
+  /** 随机 52 位十六进制设备号 */
+  export function generateDeviceId(): string;
+}
+
+declare module "@neteasecloudmusicapienhanced/api/util/xeapiKey.js" {
+  export interface XeapiPublicKey {
+    version?: string;
+    sk?: string;
+    [index: string]: unknown;
+  }
+
+  /** 向网易注册 xeapi 公钥 */
+  export function getXeapiPublicKey(
+    currentPublicKey?: XeapiPublicKey,
+    deviceId?: string,
+  ): Promise<XeapiPublicKey>;
 }
